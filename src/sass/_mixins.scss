@@ -50,7 +50,7 @@
 
         $rule: (min-width: $value);
 
-        @if $above and $i < length($breakpoints) {
+        @if (not $above) and $i < length($breakpoints) {
             $secondbreakpoint: nth($breakpoints, $i + 1);
             $secondvalue: nth($secondbreakpoint, 2);
             $rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
@@ -100,7 +100,7 @@
             @error "Breakpoint must have unit: #{$value}.";
         }
 
-        @if $above and $i < length($breakpoints) {
+        @if (not $above) and $i < length($breakpoints) {
             $secondbreakpoint: nth($breakpoints, $i + 1);
             $secondvalue: nth($secondbreakpoint, 2);
             $rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
@@ -212,7 +212,7 @@
             @error "Breakpoint must have unit: #{$value}.";
         }
 
-        @if $above and $i < length($breakpoints) {
+        @if (not $above) and $i < length($breakpoints) {
             $secondbreakpoint: nth($breakpoints, $i + 1);
             $secondvalue: nth($secondbreakpoint, 2);
             $rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
@@ -243,7 +243,7 @@
             @error "Breakpoint must have unit: #{$value}.";
         }
 
-        @if $above and $i < length($breakpoints) {
+        @if (not $above) and $i < length($breakpoints) {	
             $secondbreakpoint: nth($breakpoints, $i + 1);
             $secondvalue: nth($secondbreakpoint, 2);
             $rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
@@ -269,5 +269,26 @@
 
             @include keyvalue($key, $val);
         }
+    }
+}
+
+@mixin breakpointfromarray($breakpoints, $number, $above: false) {
+    @if length($breakpoints) <= 1 {
+        @error "Breakpoints is not an array";
+    }
+
+    $breakpoint: nth($breakpoints, $number);
+    $key: nth($breakpoint, 1);
+    $val: nth($breakpoint, 2);
+    $rule: (min-width: $val);
+
+    @if (not $above) and $number < length($breakpoints) {
+        $secondbreakpoint: nth($breakpoints, $number+1);
+        $secondvalue: nth($secondbreakpoint, 2);
+        $rule: "(min-width: #{$val}) and (max-width:#{$secondvalue})";
+    }
+
+    @media only screen and #{$rule} {
+        @content;
     }
 }
