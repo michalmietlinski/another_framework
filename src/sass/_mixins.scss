@@ -1,0 +1,229 @@
+@mixin float-styles($columns,$num) {
+	  width: (100%/$columns)*$num;  
+}
+@mixin float-offset($columns, $num,$value) {
+		margin-left:(100%/$columns)*$num;
+}
+
+
+//Just apply certain style with certain value;
+@mixin keyvalue($key, $value, $important:false){
+	@if($important){
+		#{$key}:$value !important;
+		}@else{
+			#{$key}:$value;
+		}
+	
+}
+// Name of class
+// Breakpoints - list of breakpoints in key-value arrengment
+// Columns - number of columns to divide into
+// Gutters - space between columns - including start and end column + offset
+@mixin col-list($name, $breakpoints, $columns, $gutters, $above:false) {
+	.row-#{$name}{
+	 	width:100%;
+	 	overflow:hidden;
+	 	@if $gutters{
+	 		margin-left: -($gutters/2);
+	 		margin-right: -($gutters/2);
+	 	}
+	 }
+
+	@for $i from 1 through length($breakpoints) {
+		$breakpoint:nth($breakpoints,$i);
+		$key: nth($breakpoint, 1);
+	  $value: nth($breakpoint, 2);
+	  $rule: (min-width: $value);
+		@if($above and ($i<length($breakpoints))){
+			$secondbreakpoint: nth($breakpoints, ($i+1));
+			$secondvalue: nth($secondbreakpoint, 2);
+			$rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
+		}
+
+	  @media only screen and #{$rule}{
+	  %forcolumn-#{$key}{
+	  	float: left;
+	  	@if $gutters{
+	 		padding-left: ($gutters/2);
+	 		padding-right: ($gutters/2);
+	 	}
+			
+	   }
+
+	   //Multiple loops for readability
+	   @for $j from 1 through $columns {
+	  	.col-#{$name}-#{$key}-#{$i} { 
+	      	
+	      	@extend  %forcolumn-#{$key};
+	      }
+	 	}
+	  @for $j from 1 through $columns {
+	  	.col-#{$name}-#{$key}-#{$j}{ 
+	      	
+	      	@include float-styles($columns,$j);
+	      
+	 	}
+	 }
+	 @for $j from 1 through $columns {
+	      .col-#{$name}-#{$key}-offset-#{$j} { 
+	      	
+	      	@include  float-offset($columns,$j,$value);
+	      }
+	  	}
+  }
+}
+}
+
+// Custom floats for different breakpoints
+@mixin floats($name, $breakpoints, $above:false) {
+	@for $i from 1 through length($breakpoints) {
+		$breakpoint:nth($breakpoints,$i);
+		$key: nth($breakpoint, 1);
+	  $value: nth($breakpoint, 2);
+	  $rule: (min-width: $value);
+		@if($above and ($i<length($breakpoints))){
+			$secondbreakpoint: nth($breakpoints, ($i+1));
+			$secondvalue: nth($secondbreakpoint, 2);
+			$rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
+		}
+	   @media only screen and #{$rule}{
+	  .float-#{$name}-left-#{$key}{
+	  	float:left;
+	  }
+	  .float-#{$name}-right-#{$key}{
+	  	float:left;
+	  }
+	  .float-#{$name}-none-#{$key}{
+	  	float:none;
+	  }
+		}
+
+
+	}
+
+}
+
+//Just to make sure you have some needed z-indexes
+@mixin z-indexes($number){
+	@for $i from 1 to ($number) {
+		.z-in-#{$i}{
+			@include keyvalue('z-index', 1000+$i)
+		}
+	}
+}
+
+
+
+//Extra easy mixin to make wrapper for certain breakpoint - it's redundant since it can be easily done by optionperbreakpoint mixin
+@mixin wrappers($name, $maximum-width, $break-min){
+	%justtoinclude{
+	@media only screen and (min-width: $break-min){
+			max-width: $maximum-width;
+		}
+
+	}
+	.wrapper-#{$name}{
+		@extend %justtoinclude;
+	}
+}
+
+//Simple example mixins to generate list of classes to set up standards throught whole website
+@mixin margins($name, $value, $number){
+@for $i from 0 to ($number) {
+	.m-#{$name}-tp-#{$i}{
+		margin-top: ($value*$i) !important;
+	}
+	.m-#{$name}-bt-#{$i}{
+		margin-bottom: ($value*$i) !important;
+	}
+	.m-#{$name}-all-#{$i}{
+		margin: ($value*$i) !important;
+	}
+}
+}
+@mixin paddings($name, $value, $number){
+@for $i from 0 to ($number) {
+	.p-#{$name}-tp-#{$i}{
+		padding-top: ($value*$i) !important;
+	}
+	.p-#{$name}-bt-#{$i}{
+		padding-bottom: ($value*$i) !important;
+	}
+	//Horizontal
+	.p-#{$name}-hrz-#{$i}{
+		padding-left: ($value*$i) !important;
+		padding-right: ($value*$i) !important;
+	}
+	.p-#{$name}-vrt-#{$i}{
+		padding-top: ($value*$i) !important;
+		padding-bottom: ($value*$i) !important;
+	}
+	.p-#{$name}-all-#{$i}{
+		padding: ($value*$i) !important;
+	}
+}
+}
+
+
+//Set up different options per different breakpoints including option to go above breakpoint;
+@mixin optionperbreakpoint($name, $breakpoints,$rest, $important:false, $above:false) {
+@for $i from 1 through length($breakpoints) {
+		$breakpoint:nth($breakpoints,$i);
+		$key: nth($breakpoint, 1);
+	  $value: nth($breakpoint, 2);
+	  $rule: (min-width: $value);
+		@if($above and ($i<length($breakpoints))){
+			$secondbreakpoint: nth($breakpoints, ($i+1));
+			$secondvalue: nth($secondbreakpoint, 2);
+			$rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
+		}		
+		$paramname:nth($rest,1);
+		$paramvalues: nth($rest,2);
+	  @if($i<= length($paramvalues)){
+	  @media only screen and #{$rule}{
+	   		.custom-#{$name}-#{$key}{		
+	   				@include keyvalue($paramname,nth($paramvalues,$i),$important)  				
+	   		}
+		}
+		}
+	}
+}
+
+	
+//Example mixin to create borders for different breakpoints
+@mixin borders($name, $breakpoints, $rest, $above:false) {
+	@for $i from 1 through length($breakpoints) {
+		$breakpoint:nth($breakpoints,$i);
+		$key: nth($breakpoint, 1);
+	  $value: nth($breakpoint, 2);
+	  $rule: (min-width: $value);
+		@if($above and ($i<length($breakpoints))){
+			$secondbreakpoint: nth($breakpoints, ($i+1));
+			$secondvalue: nth($secondbreakpoint, 2);
+			$rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
+		}
+	  @if($i<= length($rest)){
+	  	
+	  @media only screen and #{$rule}{
+
+	   		.border-#{$name}-#{$key}{
+	   			@include keyvalue('border',nth($rest,$i))
+	   		}
+		}
+		}
+	}
+
+}
+
+//Apply consistent styles for header
+@mixin headerparameters($num, $value){
+	h#{$num}{
+		@for $i from 1 through length($value) {
+			$element: nth($value,$i);
+			$key: nth($element,1);
+			$val: nth($element,2);
+		@include keyvalue($key,$val)
+		}
+	}
+
+}

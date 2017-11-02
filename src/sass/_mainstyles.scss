@@ -1,0 +1,24 @@
+
+$breakpoints: (xs: 0px, small: 540px, medium: 760px);
+$bordersizes: 3px solid, 2px solid, 1px solid;
+$secondbreakpoints: (xs 0px, small 600px, medium 768px, large 1200px, fullhd 1920px);
+$standardmargin:10px;
+$standardpadding:5px;
+$notstandardpadding:7px;
+$sizes: ('100px', '200px', '300px', '400px');
+$customoptions: (height, $sizes);
+
+@include col-list('new',$secondbreakpoints,12,20px);
+@include col-list('limited',$breakpoints,12,20px,true);
+@include floats('new', $breakpoints);
+@include floats('limited', $breakpoints,true);
+@include borders('new',$breakpoints, $bordersizes);
+@include paddings('standard',$standardpadding, 5)
+@include margins('standard',$standardmargin, 3);
+@include paddings('notstandard',$notstandardpadding,4)
+
+@include optionperbreakpoint('example',$secondbreakpoints, $customoptions, true, false)
+@include headerparameters(1, ((font-size 10px),(padding 10px)))
+
+@include headerparameters(2, ((font-size 14px),(padding 12px)))
+@include z-indexes(10)
