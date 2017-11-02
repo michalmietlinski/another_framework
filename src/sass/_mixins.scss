@@ -20,6 +20,12 @@
 // Columns - number of columns to divide into
 // Gutters - space between columns - including start and end column + offset
 @mixin col-list($name, $breakpoints, $columns, $gutters, $above:false) {
+	@if not  unitless($columns) {
+		@error "$columns must be unitless #{$columns}.";
+	}
+	@if unitless($gutters) {
+		@error "$gutters must have unit: #{$gutters}.";
+	}
 	.row-#{$name}{
 	 	width:100%;
 	 	overflow:hidden;
@@ -33,6 +39,10 @@
 		$breakpoint:nth($breakpoints,$i);
 		$key: nth($breakpoint, 1);
 	  $value: nth($breakpoint, 2);
+	  @if unitless($value) {
+		@error "Breakpoint must have unit: #{$value}.";
+	}
+	
 	  $rule: (min-width: $value);
 		@if($above and ($i<length($breakpoints))){
 			$secondbreakpoint: nth($breakpoints, ($i+1));
@@ -81,6 +91,10 @@
 		$key: nth($breakpoint, 1);
 	  $value: nth($breakpoint, 2);
 	  $rule: (min-width: $value);
+
+	  	@if unitless($value) {
+			@error "Breakpoint must have unit: #{$value}.";
+		}
 		@if($above and ($i<length($breakpoints))){
 			$secondbreakpoint: nth($breakpoints, ($i+1));
 			$secondvalue: nth($secondbreakpoint, 2);
@@ -105,6 +119,9 @@
 
 //Just to make sure you have some needed z-indexes
 @mixin z-indexes($number){
+	@if not unitless($number) {
+			@error "Number must be unitless: #{$number}.";
+		}
 	@for $i from 1 to ($number) {
 		.z-in-#{$i}{
 			@include keyvalue('z-index', 1000+$i)
@@ -129,6 +146,9 @@
 
 //Simple example mixins to generate list of classes to set up standards throught whole website
 @mixin margins($name, $value, $number){
+	@if unitless($value) {
+		@error "Value must have unit: #{$value}.";
+	}
 @for $i from 0 to ($number) {
 	.m-#{$name}-tp-#{$i}{
 		margin-top: ($value*$i) !important;
@@ -142,6 +162,9 @@
 }
 }
 @mixin paddings($name, $value, $number){
+	@if unitless($value) {
+		@error "Value must have unit: #{$value}.";
+	}
 @for $i from 0 to ($number) {
 	.p-#{$name}-tp-#{$i}{
 		padding-top: ($value*$i) !important;
@@ -172,6 +195,12 @@
 		$key: nth($breakpoint, 1);
 	  $value: nth($breakpoint, 2);
 	  $rule: (min-width: $value);
+
+	 	 
+	 	@if unitless($value) {
+			@error "Breakpoint must have unit: #{$value}.";
+		}
+
 		@if($above and ($i<length($breakpoints))){
 			$secondbreakpoint: nth($breakpoints, ($i+1));
 			$secondvalue: nth($secondbreakpoint, 2);
@@ -197,6 +226,11 @@
 		$key: nth($breakpoint, 1);
 	  $value: nth($breakpoint, 2);
 	  $rule: (min-width: $value);
+
+	  @if unitless($value) {
+			@error "Breakpoint must have unit: #{$value}.";
+		}
+
 		@if($above and ($i<length($breakpoints))){
 			$secondbreakpoint: nth($breakpoints, ($i+1));
 			$secondvalue: nth($secondbreakpoint, 2);
