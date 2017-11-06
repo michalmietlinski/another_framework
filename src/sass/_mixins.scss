@@ -2,6 +2,15 @@
     width: 100% / $columns * $num;
 }
 
+@mixin float-styles-with-gutters($columns,$num,$gutters) {
+      width: (100%/$columns)*$num;  
+      float: left;
+        @if $gutters{
+            padding-left: ($gutters/2);
+            padding-right: ($gutters/2);
+        }
+}
+
 @mixin float-offset($columns, $num, $value) {
     margin-left: 100% / $columns * $num;
 }
@@ -57,6 +66,8 @@
         }
 
         @media only screen and #{$rule} {
+
+            //This can be replaced using float-styles-with-gutters but his way we save many lines of unnecessary CSS;
             %forcolumn-#{$key} {
                 float: left;
 
