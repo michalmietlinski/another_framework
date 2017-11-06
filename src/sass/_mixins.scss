@@ -1,7 +1,18 @@
+/*Worth using
+http://sass-lang.com/documentation/file.SASS_REFERENCE.html
+https://css-tricks.com/snippets/sass/advanced-type-checking/
+
+*/
+
+
+
 @mixin float-styles($columns, $num) {
     width: 100% / $columns * $num;
 }
-
+@mixin float-centered($columns, $num){
+        margin-left:(100%-(100% / $columns * $num))/2;
+        margin-right:(100%-(100% / $columns * $num))/2;
+}
 @mixin float-styles-with-gutters($columns,$num,$gutters) {
       width: (100%/$columns)*$num;  
       float: left;
@@ -9,6 +20,10 @@
             padding-left: ($gutters/2);
             padding-right: ($gutters/2);
         }
+}
+
+@function is-px($value) {
+  @return is-number($value) and index('px', unit($value)) != null;
 }
 
 @mixin float-offset($columns, $num, $value) {
@@ -87,6 +102,12 @@
             @for $j from 1 through $columns {
                 .col-#{$name}-#{$key}-#{$j} {
                     @include float-styles($columns, $j);
+                    
+                    // Don't use it, unless you really have to, but it's like... whyyyyy?!
+                    // &.centered{
+                    //     @include float-centered($columns, $j)
+                    // }
+
                 }
             }
 
@@ -283,6 +304,8 @@
     }
 }
 
+
+//Apply content of for example class to one breakpoint only, or one and above
 @mixin breakpointfromarray($breakpoints, $number, $above: false) {
     @if length($breakpoints) <= 1 {
         @error "Breakpoints is not an array";
@@ -302,4 +325,26 @@
     @media only screen and #{$rule} {
         @content;
     }
+}
+
+// Simple absolute centering
+@mixin makecenter-absolute(){
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+//Declare in PX only
+@function px-to-vw($val, $breakpoint){
+    @if unitless($breakpoint) or not is-px($breakpoint) {
+            @error "Breakpoint must be in px: #{$breakpoint}.";
+        }
+        @if unitless($val) or not is-px($val)  {
+            @error "Velue must be in px: #{$val}.";
+        }
+    @return ($val/$breakpoint)*100vw;
+}
+
+@mixin px-vw-px($valmobile,$valtablet,$valdesktop, $tabletstart, $tabletend){
+//To be made
 }

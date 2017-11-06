@@ -4,6 +4,8 @@ $secondbreakpoints: xs 0px, small 600px, medium 768px, large 1200px, fullhd 1920
 $standardmargin: 10px;
 $standardpadding: 5px;
 $notstandardpadding: 7px;
+
+//Example of custom one parameter class dependant on breakpoints
 $sizes: "100px", "200px", "300px", "400px";
 $customoptions: height, $sizes;
 
@@ -35,4 +37,8 @@ $customoptions: height, $sizes;
     .test {
         height: 100px;
     }
+}
+
+.test2{
+	height: px-to-vw(20px, 720px);
 }
