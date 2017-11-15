@@ -21,7 +21,10 @@ https://css-tricks.com/snippets/sass/advanced-type-checking/
             padding-right: ($gutters/2);
         }
 }
-
+@mixin flex-styles($columns, $num) {
+flex: 0 0 ((100%/$columns)*$num);
+max-width: ((100%/$columns)*$num);
+}
 @function is-px($value) {
   @return is-number($value) and index('px', unit($value)) != null;
 }
@@ -49,7 +52,7 @@ https://css-tricks.com/snippets/sass/advanced-type-checking/
         @error "$columns must be unitless #{$columns}.";
     }
 
-    @if unitless($gutters) {
+    @if $gutters and unitless($gutters) {
         @error "$gutters must have unit: #{$gutters}.";
     }
 
@@ -119,6 +122,89 @@ https://css-tricks.com/snippets/sass/advanced-type-checking/
         }
     }
 }
+
+//Let's make some flex-why not!
+@mixin flex-list($name, $breakpoints, $columns, $gutters, $above: false) {
+    @if not unitless($columns) {
+        @error "$columns must be unitless #{$columns}.";
+    }
+
+    @if $gutters and unitless($gutters) {
+        @error "$gutters must have unit: #{$gutters}.";
+    }
+
+    .flex-row-#{$name} {
+        display: -ms-flexbox;
+		display: flex;
+		-ms-flex-wrap: wrap;
+		flex-wrap: wrap;
+
+
+        @if $gutters {
+            margin-left: -($gutters / 2);
+            margin-right: -($gutters / 2);
+        }
+    }
+    .flex-col-#{$name}{
+    	-ms-flex-preferred-size: 0;
+		flex-basis: 0;
+		-ms-flex-positive: 1;
+		flex-grow: 1;
+		max-width: 100%
+    }
+    @for $i from 1 through length($breakpoints) {
+        $breakpoint: nth($breakpoints, $i);
+        $key: nth($breakpoint, 1);
+        $value: nth($breakpoint, 2);
+
+        @if unitless($value) {
+            @error "Breakpoint must have unit: #{$value}.";
+        }
+
+        $rule: (min-width: $value);
+
+        @if (not $above) and $i < length($breakpoints) {
+            $secondbreakpoint: nth($breakpoints, $i + 1);
+            $secondvalue: nth($secondbreakpoint, 2);
+            $rule: "(min-width: #{$value}) and (max-width:#{$secondvalue})";
+        }
+
+        @media only screen and #{$rule} {
+
+            //This can be replaced using float-styles-with-gutters but his way we save many lines of unnecessary CSS;
+            %forcolumn-#{$key} {
+                @if $gutters {
+                    padding-left: $gutters / 2;
+                    padding-right: $gutters / 2;
+                }
+            }
+
+            //Multiple loops for readability
+            @for $j from 1 through $columns {
+                .col-#{$name}-#{$key}-#{$i} {
+                    @extend %forcolumn-#{$key};
+                }
+            }
+
+            @for $j from 1 through $columns {
+                .col-#{$name}-#{$key}-#{$j} {
+                    @include flex-styles($columns, $j);
+                    
+
+                }
+            }
+
+            // @for $j from 1 through $columns {
+            //     .col-#{$name}-#{$key}-offset-#{$j} {
+            //         @include float-offset($columns, $j, $value);
+            //     }
+            // }
+        }
+    }
+}
+
+
+
 
 // Custom floats for different breakpoints
 @mixin floats($name, $breakpoints, $above: false) {

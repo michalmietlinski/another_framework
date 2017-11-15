@@ -13,6 +13,9 @@ $customoptions: height, $sizes;
 
 @include col-list("limited", $breakpoints, 12, 20px, true);
 
+@include flex-list("new", $secondbreakpoints, 12, false);
+
+
 @include floats("new", $breakpoints);
 
 @include floats("limited", $breakpoints, true);
